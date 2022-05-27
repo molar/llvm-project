@@ -24,6 +24,7 @@ add_clang_library(clangTidyModernizeModule
   ReplaceDisallowCopyAndAssignMacroCheck.cpp
   ReplaceRandomShuffleCheck.cpp
   ReturnBracedInitListCheck.cpp
+  RosstreamtofmtCheck.cpp
   ShrinkToFitCheck.cpp
   UnaryStaticAssertCheck.cpp
   UseAutoCheck.cpp

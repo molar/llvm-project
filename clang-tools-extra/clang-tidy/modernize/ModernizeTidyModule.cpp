@@ -25,6 +25,7 @@
 #include "ReplaceDisallowCopyAndAssignMacroCheck.h"
 #include "ReplaceRandomShuffleCheck.h"
 #include "ReturnBracedInitListCheck.h"
+#include "RosstreamtofmtCheck.h"
 #include "ShrinkToFitCheck.h"
 #include "UnaryStaticAssertCheck.h"
 #include "UseAutoCheck.h"
@@ -51,6 +52,8 @@ namespace modernize {
 class ModernizeModule : public ClangTidyModule {
 public:
   void addCheckFactories(ClangTidyCheckFactories &CheckFactories) override {
+    CheckFactories.registerCheck<RosstreamtofmtCheck>(
+        "modernize-RosStreamToFmt");
     CheckFactories.registerCheck<AvoidBindCheck>("modernize-avoid-bind");
     CheckFactories.registerCheck<AvoidCArraysCheck>("modernize-avoid-c-arrays");
     CheckFactories.registerCheck<ConcatNestedNamespacesCheck>(
