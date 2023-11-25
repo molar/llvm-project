@@ -683,6 +683,50 @@ ALIAS("__typeof__"   , typeof     , KEYALL)
 ALIAS("__volatile"   , volatile   , KEYALL)
 ALIAS("__volatile__" , volatile   , KEYALL)
 
+
+
+
+ALIAS("skabelon" , template   , KEYCXX)
+ALIAS("typenavn" , typename   , KEYCXX)
+ALIAS("intet" , void   , KEYALL)
+ALIAS("bestandig" , const   , KEYALL)
+ALIAS("foranderlig" , mutable   , KEYALL)
+ALIAS("flygtig" , volatile   , KEYALL)
+ALIAS("returner" , return   , KEYALL)
+ALIAS("optegnelse" , struct   , KEYCXX)
+ALIAS("klasse" , class   , KEYCXX)
+ALIAS("konstant_udtryk" , constexpr   , KEYCXX11)
+ALIAS("hvis" , if   , KEYALL)
+ALIAS("ellers" , else   , KEYALL)
+ALIAS("skift" , switch   , KEYALL)
+ALIAS("kasse" , case   , KEYALL)
+ALIAS("mens" , while   , KEYALL)
+ALIAS("sand" , true   , KEYALL)
+ALIAS("falsk" , false   , KEYALL)
+ALIAS("navnerum" , namespace   , KEYALL)
+ALIAS("begreb" , concept   , KEYCXX20)
+ALIAS("kræver" , requires   , KEYCXX20)
+ALIAS("opregn" , enum   , KEYALL)
+ALIAS("fagforening" , union   , KEYALL)
+ALIAS("nulpeger" , nullptr   , KEYALL)
+ALIAS("offentlig", public, KEYCXX)
+ALIAS("beskyttet", protected, KEYCXX)
+ALIAS("privat", private, KEYCXX)
+ALIAS("typenaf", typeof, KEYCXX)
+ALIAS("prøv", try, KEYCXX)
+ALIAS("fang", catch, KEYCXX)
+ALIAS("ny", new, KEYCXX)
+ALIAS("indskyd", inline, KEYCXX)
+
+
+//primitive types
+ALIAS("heler",int,KEYALL)
+ALIAS("flyder",float,KEYALL)
+ALIAS("storflyder",float,KEYALL)
+ALIAS("fortegnet",signed,KEYALL)
+ALIAS("positiv",unsigned,KEYALL)
+
+
 // Type nullability.
 KEYWORD(_Nonnull                 , KEYALL)
 KEYWORD(_Nullable                , KEYALL)
