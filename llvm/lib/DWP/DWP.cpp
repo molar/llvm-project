@@ -415,6 +415,17 @@ Expected<InfoSectionUnitHeader> parseInfoSectionUnitHeader(StringRef Info) {
   return Header;
 }
 
+static void writeNewOffsetsTo(MCStreamer &Out, DataExtractor &Data,
+                              DenseMap<uint64_t, uint32_t> &OffsetRemapping,
+                              uint64_t &Offset, uint64_t &Size) {
+
+  while (Offset < Size) {
+    auto OldOffset = Data.getU32(&Offset);
+    auto NewOffset = OffsetRemapping[OldOffset];
+    Out.emitIntValue(NewOffset, 4);
+  }
+}
+
 void writeStringsAndOffsets(MCStreamer &Out, DWPStringPool &Strings,
                             MCSection *StrOffsetSection,
                             StringRef CurStrSection,
@@ -439,17 +450,37 @@ void writeStringsAndOffsets(MCStreamer &Out, DWPStringPool &Strings,
 
   Out.switchSection(StrOffsetSection);
 
-  uint64_t HeaderSize = debugStrOffsetsHeaderSize(Data, Version);
   uint64_t Offset = 0;
   uint64_t Size = CurStrOffsetSection.size();
-  // FIXME: This can be caused by bad input and should be handled as such.
-  assert(HeaderSize <= Size && "StrOffsetSection size is less than its header");
-  // Copy the header to the output.
-  Out.emitBytes(Data.getBytes(&Offset, HeaderSize));
-  while (Offset < Size) {
-    auto OldOffset = Data.getU32(&Offset);
-    auto NewOffset = OffsetRemapping[OldOffset];
-    Out.emitIntValue(NewOffset, 4);
+  if (Version > 4) {
+    while (Offset < Size) {
+      // read header to get length of constribution
+      // header can be either DWARF32 or DWARF64 indicated by the first 4 bytes
+      // being 0xFFFFFFFF
+      uint64_t HeaderSize = debugStrOffsetsHeaderSize(Data, Version);
+      assert(HeaderSize <= Size - Offset &&
+             "StrOffsetSection size is less than its header");
+
+      uint64_t ContributionEnd = 0;
+      uint64_t ContributionSize = 0;
+      uint64_t HeaderLengthOffset = Offset;
+      if (HeaderSize == 8) {
+        ContributionSize = Data.getU32(&HeaderLengthOffset);
+      } else if (HeaderSize == 16) {
+        HeaderLengthOffset += 4; // skip the dwarf64 marker
+        ContributionSize = Data.getU64(&HeaderLengthOffset);
+      }
+      // the ContributionSize excludes the length field itself, but not the
+      // following version and padding field 7.26 page 240
+      ContributionEnd = ContributionSize + HeaderLengthOffset;
+      // write the current contribution header
+      Out.emitBytes(Data.getBytes(&Offset, HeaderSize));
+      // write the offsets belonging to this contribution
+      writeNewOffsetsTo(Out, Data, OffsetRemapping, Offset, ContributionEnd);
+    }
+
+  } else {
+    writeNewOffsetsTo(Out, Data, OffsetRemapping, Offset, Size);
   }
 }
 
